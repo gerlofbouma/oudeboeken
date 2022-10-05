@@ -1,0 +1,6 @@
+Command line to change Dutch 19th century spelling into modern spelling,
+for use by Alpino
+
+
+python3 triples.py | python3 meta.py spelling | sed -f map.sed | python3 meta.py hand2
+
