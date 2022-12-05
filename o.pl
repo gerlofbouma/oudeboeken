@@ -198,6 +198,12 @@ spelling_rule(Chars,Chars1) :-
     append("aa",Rest,End1),
     append(Begin,End1,Chars1).
 
+spelling_rule(Chars,Chars1) :-
+    append(Begin,End,Chars),
+    append("ph",Rest,End),
+    append("f",Rest,End1),
+    append(Begin,End1,Chars1).
+
 %%% oolijk -> olijk
 spelling_rule(Chars,Chars1) :-
     append(Begin,End,Chars),
