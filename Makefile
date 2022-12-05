@@ -1,15 +1,15 @@
-novels = /var/tmp/andreas/DBNLnovels-selection/*.gz
+novels = dbnl_without/*.sents.gz
 threshold = 10
 
-all: btest.sents all.sents.gz all.alts apply-all split
+all: btest.sents all.alts apply-all 
 
-# for now, words including | are removed because Alpino -lex_all will do funny things
+# for now, words including |,[,] are removed because Alpino -lex_all will do funny things
 words.freq: $(novels)
 	zcat $(novels) | sed -e 's/^[^|]*[|]//' | tr ' ' '\n' |\
-        sort | uniq -c | sort -nr | awk '{ if ($$1 > $(threshold) print $$0 }'|\
+        sort | uniq -c | sort -nr | awk '{ if ($$1 > $(threshold)) print $$0 }'|\
         grep -v '[|]' > words.freq
 
-# check unknown words, but (possible) ignore words starting with capital/consisting of digits
+# check unknown words, but (possibly) ignore words starting with capital/consisting of digits
 #ignore = grep -v -e '^[A-Z]' -e '^[0-9][0-9]*$$'
 ignore = cat
 words.unknowns: words.freq
@@ -44,16 +44,11 @@ ctest:
          $(pipe) \
          > $*.sents
 
-all.sents.gz: spelling meta.py triples.py nouns adj_pair det_pair map.sed hand2
-	 zcat /var/tmp/andreas/DBNLnovels-selection/*.gz |\
-         $(pipe) |\
-         gzip > all.sents.gz
-
-all.alts: all.sents.gz
-	zcat all.sents.gz |grep -o ' [[][^]]*[]]' |sort | uniq -c | sort -nr > all.alts
+all.alts: dbnl_with/*.sents.gz
+	zcat dbnl_with/*.sents.gz |grep -o ' [[][^]]*[]]' |sort | uniq -c | sort -nr > all.alts
 
 adjn:
-	zcat /var/tmp/andreas/DBNLnovels-selection/* |\
+	zcat $(novels) |\
          grep -o ' den [a-z]*[abcdfghjklmnpqrstvwxyz]en [a-z]* ' |\
          awk '{print $$2 }' | sort | uniq -c |sort -nr |\
          awk '{ if ($$1>10) print $$2}' > adjn
@@ -62,28 +57,19 @@ adj_pair: adjn
 	cat adjn | Alpino -notk -l p batch_command=adj |uniq > adj_pair
 
 qnouns:
-	zcat /var/tmp/andreas/DBNLnovels-selection/* | egrep -o '[ |](mijnen|dezen|den|zulken|een|eenen|hunnen|menigen|haren|zijnen|mijnen) [^ ][^ ]*en [^ ][^ ][^ ]* ' | awk '{ print $3 }' | sort -u > qnouns
+	zcat $(novels) | egrep -o '[ |](mijnen|dezen|den|zulken|een|eenen|hunnen|menigen|haren|zijnen|mijnen) [^ ][^ ]*en [^ ][^ ][^ ]* ' | awk '{ print $3 }' | sort -u > qnouns
 
 nouns: qnouns q.pl
 	cat qnouns |\
          Alpino -notk unknowns=off -l q batch_command=noun |\
          uniq > nouns
 
-apply:
-	zcat /var/tmp/andreas/DBNLnovels-selection/$(novel).tok.gz |\
+dbnl_with/%: dbnl_without/% triples.py spelling map.sed hand2
+	zcat dbnl_without/$* |\
          $(pipe) |\
-         gzip >DBNLnovels-selection/$(novel).tok.gz
+        gzip > dbnl_with/$*
 
-apply-all:
-	for title in `cat titles`; do $(MAKE) -s apply novel=$$title; done
-
-split:
-	( cd DBNLnovels-selection ; \
-          for file in `cat ../titles` ; \
-          do zcat $$file.tok.gz |\
-             $(ALPINO_HOME)/Suites/split_in_parts -p 2500 -o $$file ;\
-          done \
-        )
+apply-all: $(novels:dbnl_without/%=dbnl_with/%)
 
 random-without.sents.gz:
 	zcat $(novels) |\
@@ -101,3 +87,7 @@ random-with.sents.gz: random-without.sents.gz spelling meta.py triples.py nouns 
 check:
 	grep '[[][^]]*[[]' *.sents |grep -v '[\][[]' |cat
 	zgrep '[[][^]]*[[]' *.sents.gz |grep -v '[\][[]' |cat
+
+### this will "apply" the meta-annotation, so that only the "modern" text remains
+undo:
+	@zcat $(file) | perl -p -e 's!\[ \@alt ~(\w+?)~\w+ .*?\]!$$1!g; s!\[ \@(alt|mwu_alt|phantom) (\w+) .*?\]!$$2!g; s!\[ \@skip .*? \] *!!g;' 
