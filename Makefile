@@ -1,4 +1,19 @@
-novels = $(wildcard dbnl_without/*.sents.gz)
+## IF you want to generate your own rule set on the basis of a number
+## of (tokenized documents), then you need to redefine the novels and
+## novelsdir variables
+##
+## the tok.gz files in the novels directory should be in the tokenized
+## Alpino format: every line is a sentence prefixed by a key
+##
+##
+## 1|The first sentence ...
+## 2|The scond one !
+## 3|Etcetera .
+
+
+#novels = $(wildcard dbnl_without/*.sents.gz)
+novels = $(wildcard $(novelsdir)/*.tok.gz)
+novelsdir = /mnt/local/tmp/andreas/DBNL-20230214/output/tokenized
 tests = $(wildcard TestWithout/*.tok)
 threshold = 10
 
@@ -6,7 +21,7 @@ all: btest.sents all.alts apply-all
 
 # for now, words including |,[,] are removed because Alpino -lex_all will do funny things
 words.freq: $(novels)
-	zcat dbnl_without/*.sents.gz | sed -e 's/^[^|]*[|]//' | tr ' ' '\n' |\
+	find $(novelsdir) -name '*.tok.gz' | xargs zcat | sed -e 's/^[^|]*[|]//' | tr ' ' '\n' |\
         sort | uniq -c | sort -nr | awk '{ if ($$1 > $(threshold)) print $$0 }'|\
         grep -v '[|]' > words.freq
 

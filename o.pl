@@ -17,7 +17,7 @@ check_spelling(Chars) :-
     sort(List0,[Word|Words]),    
     (   Words == []
     ->  format("~s ~w~n",[Chars,Word])
-    ;   format(user_error,"multiple results: ~w~n",[Words])	
+    ;   format(user_error,"multiple results: ~s --> ~w~n",[Chars,[Word|Words]])	
     ).
 
 
@@ -178,6 +178,11 @@ spelling_rule(Chars,Chars1) :-
     lists:append(Pref,Suffix1,Chars1).
 
 %%% sch -> s
+%%% I think this rule should not apply at the beginning of a word:
+%%% schaamen  ->  *samen
+%%% schaemen  ->  *samen
+%%% schandael ->  *sandaal
+%%% scheering ->  *sering
 spelling_rule(Chars,Chars1) :-
     append(Begin,End,Chars),
     append("sch",Rest,End),
