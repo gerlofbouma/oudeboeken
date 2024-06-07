@@ -74,3 +74,16 @@ s/\([| ]\)Hij heb /\1Hij [ @alt heeft heb ] /g
 s/\([| ]\)Ze het /\1Ze [ @alt heeft het ] /g
 s/\([| ]\)Hij het /\1Hij [ @alt heeft het ] /g
 s/ hè je / [ @alt heb hè ] je /g
+s/\([| ][dD]\)e gaaf /\1e [ @alt gave gaaf ] /g
+s/\([| ]\)op eens /\1 [ @mwu_alt opeens op eens ] /g
+s/\([| ]\)Op eens /\1 [ @mwu_alt opeens Op eens ] /g
+s/\([| ]\)op nieuw /\1 [ @mwu_alt opnieuw op nieuw ] /g
+s/\([| ]\)Op nieuw /\1 [ @mwu_alt opnieuw Op nieuw ] /g
+s/\([| ]\)van zelf /\1 [ @mwu_alt vanzelf van zelf ] /g
+s/\([| ]\)Van zelf /\1 [ @mwu_alt vanzelf Van zelf ] /g
+s/\([| ]\)des ondanks /\1 [ @mwu_alt desondanks des ondanks ] /g
+s/\([| ]\)Des ondanks /\1 [ @mwu_alt desondanks Des ondanks ] /g
+s/\([| ]\)elke der /\1[ @alt elk elke ] der /g
+s/\([| ]\)Elke der /\1[ @alt Elk elke ] der /g
+
+

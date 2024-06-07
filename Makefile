@@ -36,8 +36,10 @@ auto: words.unknowns o.pl
 
 spelling: auto hand
 	python3 add_cap.py < hand > handc
-	python3 add_cap.py < auto > autoc
-	sort -u auto autoc hand handc > spelling
+	sort -u auto hand handc > spelling
+
+check_spelling: spelling
+	awk '{ print $$1 }' spelling | sort | uniq -d
 
 pipe=python3 triples.py | python3 meta.py spelling | sed -f map.sed | python3 meta.py hand2
 
@@ -50,7 +52,7 @@ all.alts: dbnl_with/*.sents.gz
 	zcat dbnl_with/*.sents.gz |grep -o ' [[][^]]*[]]' |sort | uniq -c | sort -nr > all.alts
 
 adjn:
-	zcat $(novels) |\
+	find $(novelsdir) -name '*.tok.gz' | xargs zcat |\
          grep -o ' den [a-z]*[abcdfghjklmnpqrstvwxyz]en [a-z]* ' |\
          awk '{print $$2 }' | sort | uniq -c |sort -nr |\
          awk '{ if ($$1>10) print $$2}' > adjn
@@ -59,7 +61,8 @@ adj_pair: adjn
 	cat adjn | Alpino -notk -l p batch_command=adj |uniq > adj_pair
 
 qnouns:
-	zcat $(novels) | egrep -o '[ |](mijnen|dezen|den|zulken|een|eenen|hunnen|menigen|haren|zijnen|mijnen) [^ ][^ ]*en [^ ][^ ][^ ]* ' | awk '{ print $3 }' | sort -u > qnouns
+	find $(novelsdir) -name '*.tok.gz' | xargs zcat |\
+	egrep -o '[ |](mijnen|dezen|den|zulken|een|eenen|hunnen|menigen|haren|zijnen|mijnen) [^ ][^ ]*en [^ ][^ ][^ ]* ' | awk '{ print $$3 }' | sort -u > qnouns
 
 nouns: qnouns q.pl
 	cat qnouns |\
