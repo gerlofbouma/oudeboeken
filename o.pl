@@ -230,6 +230,11 @@ spelling_rule(Chars,Chars1,His,[gch|His]) :-
     append(Begin,[103,99,104|End],Chars),
     append(Begin,[99,104|End],Chars1).
 
+%%% g -> ch
+%spelling_rule(Chars,Chars1,His,[g|His]) :-
+%    append(Begin,[103|End],Chars),
+%    append(Begin,[99,104|End],Chars1).
+
 %%% ck -> k
 spelling_rule(Chars,Chars1,His,[ck|His]) :-
     append(Begin,[99,107|End],Chars),
@@ -242,10 +247,31 @@ spelling_rule(Chars,Chars1,His,[uy|His]) :-
     append(Begin,[117,105|End],Chars1).
 
 %%% ey -> ei
-spelling_rule(Chars,Chars1,His,[uy|His]) :-
+spelling_rule(Chars,Chars1,His,[ey|His]) :-
     \+ member(cap,His), % those are mostly (also) names: Bruyne Ruyter Zuylen
     append(Begin,[101,121|End],Chars),
     append(Begin,[101,105|End],Chars1).
+
+%%% aaij -> aai
+spelling_rule(Chars,Chars1,His,[aaij|His]) :-
+    append(Begin,[97,97,105,106|End],Chars),
+    append(Begin,[97,97,105|End],Chars1).
+
+%%% ooij -> ooi
+spelling_rule(Chars,Chars1,His,[ooij|His]) :-
+    append(Begin,[111,111,105,106|End],Chars),
+    append(Begin,[111,111,105|End],Chars1).
+
+%%% Coij -> Cooi
+spelling_rule(Chars,Chars1,His,['Coij'|His]) :-
+    append(Begin,[Cons,111,105,106|End],Chars),
+    cons(Cons),
+    append(Begin,[Cons,111,111,105|End],Chars1).
+
+%%% eij -> ei
+spelling_rule(Chars,Chars1,His,[oeij|His]) :-
+    append(Begin,[111,101,105,106|End],Chars),
+    append(Begin,[111,101,105|End],Chars1).
 
 %%% weder -> weer
 spelling_rule(Chars,Chars1,His,[weder|His]) :-
@@ -259,6 +285,7 @@ spelling_rule(Chars,Chars1,His,[gh|His]) :-
     \+ member(Chars,["saghen"]),
     append(Begin,[103|End],Chars1).
 
+%%% heit$ -> heid$
 spelling_rule(Chars,Chars1,His,[heit|His]):-
     append(Begin,"heit",Chars),
     append(Begin,"heid",Chars1).
@@ -300,3 +327,24 @@ open_c(115).    % s  Europeesche -> Europeese -> Europese
 open_c(116).    % t
 open_c(118).    % v  gelooven -> geloven
 open_c(122).    % z
+
+cons(98).
+cons(99).
+cons(100).
+cons(102).
+cons(103).
+cons(104).
+cons(106).
+cons(107).
+cons(108).
+cons(109).
+cons(110).
+cons(112).
+cons(113).
+cons(114).
+cons(115).
+cons(116).
+cons(118).
+cons(119).
+cons(120).
+cons(122).

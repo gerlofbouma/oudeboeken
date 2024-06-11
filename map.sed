@@ -85,5 +85,16 @@ s/\([| ]\)des ondanks /\1 [ @mwu_alt desondanks des ondanks ] /g
 s/\([| ]\)Des ondanks /\1 [ @mwu_alt desondanks Des ondanks ] /g
 s/\([| ]\)elke der /\1[ @alt elk elke ] der /g
 s/\([| ]\)Elke der /\1[ @alt Elk elke ] der /g
+s/ als$/ als [ @phantom : ]/
+s/ zoals$/ zoals [ @phantom : ]/
+s/ met$/ met [ @phantom : ]/
+s/ tot$/ tot [ @phantom : ]/
+s/ en$/ en [ @phantom : ]/
+s/ of$/ of [ @phantom : ]/
+s/ omdat$/ omdat [ @phantom : ]/
+s/\([| ]\)\([iI]\)n strikten /\1\2n [ @alt strikte strikten ] /g
+s/\([| ]\)\([iI]\)n gelijken /\1\2n [ @alt gelijke gelijken ] /g
+s/\([| ]\)\([mM]\)et vernieuwden /\1\2et [ @alt vernieuwde vernieuwden ] /g
+s/ des te eer / des te [ @alt eerder eer ] /g
 
 
