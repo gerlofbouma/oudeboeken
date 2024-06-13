@@ -230,7 +230,7 @@ spelling_rule(Chars,Chars1,His,[gch|His]) :-
     append(Begin,[103,99,104|End],Chars),
     append(Begin,[99,104|End],Chars1).
 
-%%% g -> ch
+%%% g -> ch a bit of a mess
 %spelling_rule(Chars,Chars1,His,[g|His]) :-
 %    append(Begin,[103|End],Chars),
 %    append(Begin,[99,104|End],Chars1).
@@ -268,10 +268,15 @@ spelling_rule(Chars,Chars1,His,['Coij'|His]) :-
     cons(Cons),
     append(Begin,[Cons,111,111,105|End],Chars1).
 
-%%% eij -> ei
+%%% oeij -> oei
 spelling_rule(Chars,Chars1,His,[oeij|His]) :-
     append(Begin,[111,101,105,106|End],Chars),
     append(Begin,[111,101,105|End],Chars1).
+
+%% leeraar -> leraar
+spelling_rule(Chars,Chars1,His,[leeraar|His]) :-
+    append(Begin,[108,101,101,114,97,97,114|End],Chars),
+    append(Begin,[108,101,114,97,97,114|End],Chars1).
 
 %%% weder -> weer
 spelling_rule(Chars,Chars1,His,[weder|His]) :-
@@ -309,6 +314,16 @@ spelling_rule(Chars,Chars1,His,[like|His]) :-
 spelling_rule(Chars,Chars1,His,[liks|His]) :-
     append(Begin,"liks",Chars),
     append(Begin,"lijks",Chars1).
+
+%%% igting -> ichting
+spelling_rule(Chars,Chars1,His,[igting|His]) :-
+    append(Begin,[105,103,116,105,110,103|End],Chars),
+    append(Begin,[108,101,114,97,97,114|End],Chars1).
+
+%%% ieele -> iële
+spelling_rule(Chars,Chars1,His,[igting|His]) :-
+    append(Begin,[105,101,101,108,101|End],Chars),
+    append(Begin,[105,235,108,101|End],Chars1).
 
 double_v(97).   % a
 double_v(101).  % e
