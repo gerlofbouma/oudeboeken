@@ -38,6 +38,7 @@ find_variant([Upper|Codes],Word1,Before) :-
     alpino_latin1:toupper(L,U),
     atom_codes(Word1,[U|Codes0]).
 
+skip_word("eenen").     % moet een of ene worden
 skip_word("vorsch").    % moet ook vers en kikvors worden
 skip_word("heeschen").  % want wordt ook hese
 skip_word("hoogen").    % want wordt ook hoge
@@ -299,6 +300,11 @@ spelling_rule(Chars,Chars1,His,[heit|His]):-
 spelling_rule([122,111,111|Chars],[122,111|Chars],His,[zoo|His]) :-
     \+ member(Chars,["gh","g"]).
 
+%%% neder -> neer
+spelling_rule(Chars,Chars1,His,[neder|His]):-
+    append(Begin,[110,101,100,101,114|End],Chars),
+    append(Begin,[110,101,101,114|End],Chars1).
+
 %%% lik -> lijk (aan het eind)
 spelling_rule(Chars,Chars1,His,[lik|His]) :-
     \+ member(Chars,["lik","Lik","blik","Blik","slik","Slik"]),
@@ -324,6 +330,37 @@ spelling_rule(Chars,Chars1,His,[igting|His]) :-
 spelling_rule(Chars,Chars1,His,[igting|His]) :-
     append(Begin,[105,101,101,108,101|End],Chars),
     append(Begin,[105,235,108,101|End],Chars1).
+
+%%%%%% meer toevoegingen, mail Gerlof 19 juni 2024
+
+%%% en[dt]lijk -> enlijk
+spelling_rule(Chars,Chars1,His,[gezamendlijk|His]) :-
+    append(Begin,[101,110,DT,108,105,106,107|End],Chars),
+    member(DT,[100,116]),
+    append(Begin,[101,110,108,105,106,107|End],Chars1).
+
+%%% ndlijk -> ndelijk
+spelling_rule(Chars,Chars1,His,[vriendlijk|His]) :-
+    append(Begin,[101,110,100,108,105,106,107|End],Chars),
+    append(Begin,[101,110,100,101,108,105,106,107|End],Chars1).
+
+%%% stlijk -> stelijk
+spelling_rule(Chars,Chars1,His,[vorstlijk|His]) :-
+    append(Begin,[115,116,108,105,106,107|End],Chars),
+    append(Begin,[115,116,101,108,105,106,107|End],Chars1).
+
+%%% [ns][dt][lr]en -> [ns][dt]e[lr]en
+spelling_rule(Chars,Chars1,His,[handlen|His]) :-
+    append(Begin,[NS,DT,LR,101,110|End],Chars),
+    member(NS,[110,115]),
+    member(LR,[108,114]),
+    member(DT,[100,116]),
+    append(Begin,[NS,DT,101,LR,101,110|End],Chars1).
+
+%%% saam -> samen
+spelling_rule(Chars,Chars1,His,[saam|His]):-
+    append("saam",End,Chars),
+    append("samen",End,Chars1).
 
 double_v(97).   % a
 double_v(101).  % e
