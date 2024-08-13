@@ -184,6 +184,11 @@ spelling_rule(Chars,Chars1,His,[oeij|His]) :-
     append(Begin,[111,101,105,106|End],Chars),
     append(Begin,[111,101,105|End],Chars1).
 
+%%% aauw -> auw
+spelling_rule(Chars,Chars1,His,[aauw|His]) :-
+    append(Begin,[97,97,117,119,101|End],Chars),
+    append(Begin,[97,117,119,101|End],Chars1).
+
 %%% weder -> weer
 spelling_rule(Chars,Chars1,His,[weder|His]) :-
     append(Begin,[119,101,100,101,114|End],Chars),
