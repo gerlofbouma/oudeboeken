@@ -12,7 +12,7 @@ adj :-
 
 check_adj(Hoogen) :-
     lists:append(Hooge,"n",Hoogen),
-    apply_spelling_rules_(Hooge,Hoge), % zero or more rules
+    apply_spelling_rules_(Hooge,Hoge,[],_), % zero or more rules
     atom_codes(HogeAtom,Hoge),
     alpino_lex:lexicon(Cat,_,[HogeAtom],[],His),
     allowed_cat(Cat),
