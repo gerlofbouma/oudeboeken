@@ -11,18 +11,22 @@ go :-
     ),
     !.
 
-
 check_spelling(Chars) :-
     findall(Word1,find_variant(Chars,Word1,[]),List0),
-    sort(List0,[Word|Words]),    
-    (   Words == []
-    ->  format("~s ~w~n",[Chars,Word])
-    ;   format(user_error,"multiple results: ~s --> ~w~n",[Chars,[Word|Words]])	
-    ).
+    sort(List0,List),
+    report(List,Chars).
 
+%report([],Chars) :-
+%    format(user_error,"no results: ~s~n",[Chars]).
+report([Word|Words],Chars):-
+    report_alts(Words,Word,Chars).
+
+report_alts([],Word,Chars) :-
+    format("~s ~w~n",[Chars,Word]).
+report_alts([Word2|Words],Word1,Chars) :-
+    format(user_error,"multiple results: ~s --> ~w~n",[Chars,[Word1,Word2|Words]]).
 
 find_variant(Chars,Word1,Before) :-
-%%%    format(user_error,"~s~n",[Chars]),
     \+ skip_word(Chars),
     apply_spelling_rules(Chars,Chars1,Before),
     atom_codes(Word1,Chars1),
@@ -58,7 +62,7 @@ skip_word("geenen"). % both geen and genen
 
 apply_spelling_rules(Chars0,Chars,Before) :-
     spelling_rule(Chars0,Chars1,Before,His0),
-    apply_spelling_rules_(Chars1,Chars,His0,_His).
+    apply_spelling_rules_(Chars1,Chars,His0,_His).   % output _His for debug purposes
 
 apply_spelling_rules_(Cs,Cs,H,H).
 apply_spelling_rules_(Cs0,Cs,His0,His) :-
@@ -68,125 +72,36 @@ apply_spelling_rules_(Cs0,Cs,His0,His) :-
 allowed_his(normal).
 allowed_his('part-V').
 allowed_his('V-d'(normal)).
+allowed_his('V-de'(normal)).
 
-%%% 105: i
-%%% 103: g
-%%%  leenig -> lenig
-spelling_rule(Chars,Chars1,His,[leenig|His]) :-
-    Suffix = [V,V,C,105,103],
-    append(Pref,Suffix,Chars),
+%%% The first few rules are for "de-doubling" vowels.
+%%% In modern spelling, long vowels are written
+%%% with a single vowel in open syllables.
+%%% old: vaaren new: varen
+%%% Problem of course is that we don't have access to syllable structure.
+
+%%% This version uses a few frequent suffixes
+%%% that are (almost) certainly indicative of
+%%% open syllables:
+%%% -Cig -Cen -Cer -Cing -Ce$ -lijk -Celijk
+
+spelling_rule(Chars,Chars1,His,[eenig|His]):-
+    append(Pref,[V,V,C|Rest],Chars),
     double_v(V),
     open_c(C),
-    Suffix1 = [V,C,105,103],
-    append(Pref,Suffix1,Chars1).
+    open_suffix(C,Rest),
+    append(Pref,[V,C|Rest],Chars1).
 
-%%% 101: e
-%%% 105: i
-%%% 103: g
-%%%  leenige -> lenige
-spelling_rule(Chars,Chars1,His,[leenige|His]) :-
-    Suffix = [V,V,C,105,103,101],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,105,103,101],
-    append(Pref,Suffix1,Chars1).
+%%% leeraar -> leraar
+%%% only suffix -Caar gives too many false hits (teelaarde,wreedaard,kwaadaardig)
+spelling_rule(Chars,Chars1,His,[leeraar|His]) :-
+    append(Begin,[108,101,101,114,97,97,114|End],Chars),
+    append(Begin,[108,101,114,97,97,114|End],Chars1).
 
-%%% 101: e
-%%% 110: n
-%%%  beenen -> benen
-spelling_rule(Chars,Chars1,His,[beenen|His]) :-
-    Suffix = [V,V,C,101,110],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,101,110],
-    append(Pref,Suffix1,Chars1).
-
-%%% 101: e
-%%% 114: r
-%%%  grootere -> grotere
-spelling_rule(Chars,Chars1,His,[grootere|His]) :-
-    Suffix = [V,V,C,101,114,101],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,101,114,101],
-    append(Pref,Suffix1,Chars1).
-
-%%% 101: e
-%%% 114: r
-%%%  grooter -> groter
-spelling_rule(Chars,Chars1,His,[grooter|His]) :-
-    Suffix = [V,V,C,101,114],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,101,114],
-    append(Pref,Suffix1,Chars1).
-
-%%% 101: e
-%%% 110: n
-%%% 116: t
-%%%  reekent -> rekent
-spelling_rule(Chars,Chars1,His,[reekent|His]) :-
-    Suffix = [V,V,C,101,110,116],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,101,110,116],
-    append(Pref,Suffix1,Chars1).
-
-%%% 101: e
-%%% 110: n
-%%% 100: d
-%%%  streelend -> strelend
-spelling_rule(Chars,Chars1,His,[streelend|His]) :-
-    Suffix = [V,V,C,101,110,100],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,101,110,100],
-    append(Pref,Suffix1,Chars1).
-
-%%% 101: e
-%%% 110: n
-%%% 100: d
-%%%  streelende -> strelende
-spelling_rule(Chars,Chars1,His,[streelende|His]) :-
-    Suffix = [V,V,C,101,110,100,101],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,101,110,100,101],
-    append(Pref,Suffix1,Chars1).
-
-%%%  belooning -> beloning
-spelling_rule(Chars,Chars1,His,[belooning|His]) :-
-    Suffix = [V,V,C,105,110,103],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,105,110,103],
-    append(Pref,Suffix1,Chars1).
-
-%%%  belooningen -> beloningen
-spelling_rule(Chars,Chars1,His,[belooningen|His]) :-
-    Suffix = [V,V,C,105,110,103,101,110],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,105,110,103,101,110],
-    append(Pref,Suffix1,Chars1).
-
-%%% geene -> gene
-spelling_rule(Chars,Chars1,His,[geene|His]) :-
-    Suffix = [V,V,C,101],
-    append(Pref,Suffix,Chars),
-    double_v(V),
-    open_c(C),
-    Suffix1 = [V,C,101],
-    append(Pref,Suffix1,Chars1).
+%%% tooneel -> toneel
+spelling_rule(Chars,Chars1,His,[tooneel|His]) :-
+    append(Begin,[116,111,111,110,101,101,108|End],Chars),
+    append(Begin,[116,111,110,101,101,108|End],Chars1).
 
 %%% sch -> s
 %%% this rule should not apply at the beginning of a word:
@@ -218,38 +133,33 @@ spelling_rule(Chars,Chars1,His,[ph|His]) :-
     append(Begin,[112,104|End],Chars),
     append(Begin,[102|End],Chars1).
 
-%%% oolijk -> olijk
-spelling_rule(Chars,Chars1,His,[oolijk|His]) :-
-    append(Begin,[108,105,106,107|End],Chars),
-    append(Vr,[V,V],Begin),
-    double_v(V),
-    append(Vr,[V],Begin2),
-    append(Begin2,[108,105,106,107|End],Chars1).
-
 %%% gch -> ch
 spelling_rule(Chars,Chars1,His,[gch|His]) :-
     append(Begin,[103,99,104|End],Chars),
     append(Begin,[99,104|End],Chars1).
 
-%%% g -> ch a bit of a mess
-%spelling_rule(Chars,Chars1,His,[g|His]) :-
-%    append(Begin,[103|End],Chars),
-%    append(Begin,[99,104|End],Chars1).
+%%% gt -> cht
+spelling_rule(Chars,Chars1,His,[gt|His]) :-
+    append(Begin,[103,116|End],Chars),
+    append(Begin,[99,104,116|End],Chars1).
 
-%%% ck -> k
-spelling_rule(Chars,Chars1,His,[ck|His]) :-
-    append(Begin,[99,107|End],Chars),
-    append(Begin,[107|End],Chars1).
+%%% ck -> k or kk
+%%% bit of a mess
+
+spelling_rule(Chars,Chars1,His,[ck|His]):-
+    append(Begin,[99,107|Rest],Chars),
+    ck_rule(Rest,Begin,Chars1).
 
 %%% uy -> ui
 spelling_rule(Chars,Chars1,His,[uy|His]) :-
-    \+ member(cap,His), % those are mostly (also) names: Bruyne Ruyter Zuylen
+    \+ member(cap,His), % those are mostly names: Bruyne Ruyter Zuylen
     append(Begin,[117,121|End],Chars),
     append(Begin,[117,105|End],Chars1).
 
 %%% ey -> ei
 spelling_rule(Chars,Chars1,His,[ey|His]) :-
-    \+ member(cap,His), % those are mostly (also) names: Bruyne Ruyter Zuylen
+    \+ member(cap,His), % those are mostly names: Deyssel Leyden Weyerman
+                        % but Leyden Majesteyt Heylige
     append(Begin,[101,121|End],Chars),
     append(Begin,[101,105|End],Chars1).
 
@@ -274,11 +184,6 @@ spelling_rule(Chars,Chars1,His,[oeij|His]) :-
     append(Begin,[111,101,105,106|End],Chars),
     append(Begin,[111,101,105|End],Chars1).
 
-%% leeraar -> leraar
-spelling_rule(Chars,Chars1,His,[leeraar|His]) :-
-    append(Begin,[108,101,101,114,97,97,114|End],Chars),
-    append(Begin,[108,101,114,97,97,114|End],Chars1).
-
 %%% weder -> weer
 spelling_rule(Chars,Chars1,His,[weder|His]) :-
     append(Begin,[119,101,100,101,114|End],Chars),
@@ -291,14 +196,14 @@ spelling_rule(Chars,Chars1,His,[gh|His]) :-
     \+ member(Chars,["saghen"]),
     append(Begin,[103|End],Chars1).
 
-%%% heit$ -> heid$
+%%% heit$ -> heid
 spelling_rule(Chars,Chars1,His,[heit|His]):-
     append(Begin,"heit",Chars),
     append(Begin,"heid",Chars1).
 
-%%% zoo -> zo (aan het begin)
+%%% ^zoo -> zo
 spelling_rule([122,111,111|Chars],[122,111|Chars],His,[zoo|His]) :-
-    \+ member(Chars,["gh","g"]).
+    \+ member(Chars,["ght","gh","g"]).
 
 %%% neder -> neer
 spelling_rule(Chars,Chars1,His,[neder|His]):-
@@ -311,27 +216,20 @@ spelling_rule(Chars,Chars1,His,[lik|His]) :-
     append(Begin,"lik",Chars),
     append(Begin,"lijk",Chars1).
 
-%%% like -> lijke (aan het eind)
+%%% like$ -> lijke
 spelling_rule(Chars,Chars1,His,[like|His]) :-
     append(Begin,"like",Chars),
     append(Begin,"lijke",Chars1).
 
-%%% liks -> lijks (aan het eind)
+%%% liks$ -> lijks
 spelling_rule(Chars,Chars1,His,[liks|His]) :-
     append(Begin,"liks",Chars),
     append(Begin,"lijks",Chars1).
 
-%%% igting -> ichting
-spelling_rule(Chars,Chars1,His,[igting|His]) :-
-    append(Begin,[105,103,116,105,110,103|End],Chars),
-    append(Begin,[108,101,114,97,97,114|End],Chars1).
-
 %%% ieele -> iële
-spelling_rule(Chars,Chars1,His,[igting|His]) :-
+spelling_rule(Chars,Chars1,His,[ieele|His]) :-
     append(Begin,[105,101,101,108,101|End],Chars),
     append(Begin,[105,235,108,101|End],Chars1).
-
-%%%%%% meer toevoegingen, mail Gerlof 19 juni 2024
 
 %%% en[dt]lijk -> enlijk
 spelling_rule(Chars,Chars1,His,[gezamendlijk|His]) :-
@@ -352,20 +250,40 @@ spelling_rule(Chars,Chars1,His,[vorstlijk|His]) :-
 %%% [ns][dt][lr]en -> [ns][dt]e[lr]en
 spelling_rule(Chars,Chars1,His,[handlen|His]) :-
     append(Begin,[NS,DT,LR,101,110|End],Chars),
-    member(NS,[110,115]),
-    member(LR,[108,114]),
-    member(DT,[100,116]),
+    ns(NS),
+    lr(LR),
+    dt(DT),
     append(Begin,[NS,DT,101,LR,101,110|End],Chars1).
 
-%%% saam -> samen
+%%% ^saam -> samen
 spelling_rule(Chars,Chars1,His,[saam|His]):-
     append("saam",End,Chars),
     append("samen",End,Chars1).
+
+%%% ^zamen -> samen
+spelling_rule(Chars,Chars1,His,[zamen|His]):-
+    append("zamen",End,Chars),
+    append("samen",End,Chars1).
+
+dt(100).
+dt(116).
+
+lr(108).
+lr(114).
+
+ns(110).
+ns(115).
 
 double_v(97).   % a
 double_v(101).  % e
 double_v(111).  % o
 double_v(117).  % u
+
+vow(97).        % a
+vow(101).       % e
+vow(105).       % i
+vow(111).       % o
+vow(117).       % u
 
 open_c(100).    % d
 open_c(103).    % g
@@ -400,3 +318,42 @@ cons(118).
 cons(119).
 cons(120).
 cons(122).
+
+open_suffix(C,[N1|Rest]) :-                    % Cig Cing Cen Cer Celijk Ce$
+    open_c(C),
+    open_suffix_after_c(N1,Rest).
+open_suffix(108,[105,106,107|_]).              % lijk
+
+open_suffix_after_c(105,[103|_]).              % ig
+open_suffix_after_c(105,[110,103|_]).          % ing
+open_suffix_after_c(101,[110|_]).              % en
+open_suffix_after_c(101,[114|_]).              % er
+open_suffix_after_c(101,[108,105,106,107|_]).  % elijk
+open_suffix_after_c(101,[]).                   % e$
+
+%%% 1. ck$ -> k (ick,oock,druck)
+ck_rule([],Begin,Result) :-
+    append(Begin,"k",Result).
+%%% 2. ckC -> k (maeckte,rijckdom)
+ck_rule([H|T],Begin,Result) :-
+    cons(H),
+    append(Begin,[107,H|T],Result).
+%%% 3. VVckV -> k (maecken, boecken, spraecke)
+ck_rule([V3|T],Begin,Result) :-
+    vow(V3),
+    append(_,[V1,V2],Begin),
+    vow(V1),
+    vow(V2),
+    append(Begin,[107,V3|T],Result).
+%%% 4. Cck -> k (welcken, sulcke, wercken)
+ck_rule([H|T],Begin,Result) :-
+    append(_,[C],Begin),
+    cons(C),
+    append(Begin,[107,H|T],Result).
+%%% 5. CVckV -> kk (getrocken, vertrecken, tacken)
+ck_rule([V3|T],Begin,Result) :-
+    vow(V3),
+    append(_,[C,V1],Begin),
+    cons(C),
+    vow(V1),
+    append(Begin,[107,107,V3|T],Result).
