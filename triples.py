@@ -30,8 +30,12 @@ def main():
 
     for line in sys.stdin:
         m=exp.match(line)
-        key=m.group(1)
-        words = m.group(2).split()            
+        if m:
+            key=m.group(1)
+            words = m.group(2).split()
+        else:
+            key=""
+            words = line.split()
         i=0
         nwords = []
         while i < len(words)-2:
@@ -49,7 +53,10 @@ def main():
             nwords.append(words[i])
         if i+1 < len(words):
             nwords.append(words[i+1])
-        print("|".join((key," ".join(nwords))))
+        if key:
+            print("|".join((key," ".join(nwords))))
+        else:
+            print(" ".join(nwords))
 
 
 if __name__ == "__main__":

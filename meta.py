@@ -15,8 +15,12 @@ def main():
     for line in sys.stdin:
         in_brackets = False
         m=exp.match(line)
-        key=m.group(1)
-        words = m.group(2).split()            
+        if m:
+            key=m.group(1)
+            words = m.group(2).split()
+        else:
+            key=""
+            words = line.split()
         nwords = []
         for word in words:
             if word == '[':
@@ -28,7 +32,10 @@ def main():
             else:
                 new = word
             nwords.append(new)
-        print("|".join((key," ".join(nwords))))
+        if key:
+            print("|".join((key," ".join(nwords))))
+        else:
+            print(" ".join(nwords))
 
 
 if __name__ == "__main__":
