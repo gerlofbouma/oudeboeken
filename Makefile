@@ -15,7 +15,7 @@
 novels = $(wildcard $(novelsdir)/*.tok.gz)
 novelsdir = /mnt/local/tmp/andreas/DBNL-20230214/output/tokenized
 tests = $(wildcard TestWithout/*.tok)
-threshold = 10
+threshold = 5
 
 all: btest.sents all.alts apply-all 
 
@@ -58,7 +58,7 @@ adjn:
          awk '{ if ($$1>10) print $$2}' > adjn
 
 adj_pair: adjn
-	cat adjn | Alpino -notk -l p batch_command=adj |uniq > adj_pair
+	sort adjn | Alpino -notk -l p batch_command=adj |uniq > adj_pair
 
 qnouns:
 	find $(novelsdir) -name '*.tok.gz' | xargs zcat |\
