@@ -27,9 +27,18 @@ filter_list([liefelijk,lieflijk],List) :-
 filter_list([liefelijke,lieflijke],List) :-
     !,
     List = [lieflijke].
+filter_list([liefelijks,lieflijks],List) :-
+    !,
+    List = [lieflijks].
 filter_list([liefelijker,lieflijker],List) :-
     !,
     List = [lieflijker].
+filter_list(['Liefelijk','Lieflijk'],List) :-
+    !,
+    List = ['Lieflijk'].
+filter_list(['Liefelijke','Lieflijke'],List) :-
+    !,
+    List = ['Lieflijke'].
 filter_list([verkieselijk,verkieslijk],List) :-
     !,
     List = [verkieslijk].
@@ -57,15 +66,12 @@ filter_list([dragelijke,draaglijke],List) :-
 filter_list([dragelijker,draaglijker],List) :-
     !,
     List = [draaglijker].
-filter_list([ondragelijk,ondraaglijk],List) :-
+filter_list([ondraaglijk,ondragelijk],List) :-
     !,
     List = [ondraaglijk].
-filter_list([ondragelijke,ondraaglijke],List) :-
+filter_list([ondraaglijke,ondragelijke],List) :-
     !,
     List = [ondraaglijke].
-filter_list([ondragelijker,ondraaglijker],List) :-
-    !,
-    List = [ondraaglijker].
 filter_list([onbeschrijfelijk,onbeschrijflijk],List) :-
     !,
     List = [onbeschrijfelijk].
@@ -126,6 +132,7 @@ skip_word("quacken").   % geen idee of kwakken of kwaken of nog iets anders?
 skip_word("Quadraat").  % naam?
 skip_word("lights").    % probably mostly in English quotes
 
+skip_word("scheyt").
 skip_word("eenen").     % moet een of ene worden
 skip_word("eenigen").   % moet enige of enigen worden
 skip_word("vorsch").    % moet ook vers en kikvors worden
