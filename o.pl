@@ -13,8 +13,72 @@ go :-
 
 check_spelling(Chars) :-
     findall(Word1,find_variant(Chars,Word1,[]),List0),
-    sort(List0,List),
-    report(List,Chars).
+    sort(List0,List1),
+    filter_list(List1,List2),
+    report(List2,Chars).
+
+%% remember these members are sorted
+filter_list([kwadraat,quadraat],List) :-
+    !,
+    List = [kwadraat].
+filter_list([liefelijk,lieflijk],List) :-
+    !,
+    List = [lieflijk].
+filter_list([liefelijke,lieflijke],List) :-
+    !,
+    List = [lieflijke].
+filter_list([liefelijker,lieflijker],List) :-
+    !,
+    List = [lieflijker].
+filter_list([verkieselijk,verkieslijk],List) :-
+    !,
+    List = [verkieslijk].
+filter_list([verkieselijke,verkieslijke],List) :-
+    !,
+    List = [verkieslijke].
+filter_list([verkieselijker,verkieslijker],List) :-
+    !,
+    List = [verkieslijker].
+filter_list([geriefelijk,gerieflijk],List) :-
+    !,
+    List = [gerieflijk].
+filter_list([geriefelijke,gerieflijke],List) :-
+    !,
+    List = [gerieflijke].
+filter_list([geriefelijker,gerieflijker],List) :-
+    !,
+    List = [gerieflijker].
+filter_list([dragelijk,draaglijk],List) :-
+    !,
+    List = [draaglijk].
+filter_list([dragelijke,draaglijke],List) :-
+    !,
+    List = [draaglijke].
+filter_list([dragelijker,draaglijker],List) :-
+    !,
+    List = [draaglijker].
+filter_list([ondragelijk,ondraaglijk],List) :-
+    !,
+    List = [ondraaglijk].
+filter_list([ondragelijke,ondraaglijke],List) :-
+    !,
+    List = [ondraaglijke].
+filter_list([ondragelijker,ondraaglijker],List) :-
+    !,
+    List = [ondraaglijker].
+filter_list([onbeschrijfelijk,onbeschrijflijk],List) :-
+    !,
+    List = [onbeschrijfelijk].
+filter_list([onbeschrijfelijke,onbeschrijflijke],List) :-
+    !,
+    List = [onbeschrijfelijke].
+filter_list([zintuigelijk,zintuiglijk],List) :-
+    !,
+    List = [zintuigelijk].
+filter_list([zintuigelijke,zintuiglijke],List) :-
+    !,
+    List = [zintuigelijke].
+filter_list(L,L).
 
 %report([],Chars) :-
 %    format(user_error,"no results: ~s~n",[Chars]).
@@ -24,14 +88,16 @@ report([Word|Words],Chars):-
 report_alts([],Word,Chars) :-
     format("~s ~w~n",[Chars,Word]).
 report_alts([Word2|Words],Word1,Chars) :-
-    format(user_error,"multiple results: ~s --> ~w~n",[Chars,[Word1,Word2|Words]]).
+    format(user_error,"multiple results: ~s --> ~w~n",[Chars,[Word1,Word2|Words]]),
+    format("~s ~~~w~~~w~n",[Chars,Word1,Word2]).
 
 find_variant(Chars,Word1,Before) :-
     \+ skip_word(Chars),
+    % format(user_error,"trying ~s~n",[Chars]),  for debugging if a cycle is suspected
     apply_spelling_rules(Chars,Chars1,Before),
     atom_codes(Word1,Chars1),
     alpino_lex:lexicon(_,_,[Word1],[],His),
-    allowed_his(His).
+    allowed_his(His,Before).
 
 find_variant([Upper|Codes],Word1,Before) :-
     alpino_latin1:isupper(Upper),
@@ -42,7 +108,26 @@ find_variant([Upper|Codes],Word1,Before) :-
     alpino_latin1:toupper(L,U),
     atom_codes(Word1,[U|Codes0]).
 
+skip_word("overheyt").
+skip_word("Overheyt").
+skip_word("ooverheit").
+skip_word("Ooverheit").
+skip_word("weeder").
+skip_word("Weeder").
+skip_word("weederom").
+skip_word("Weederom").
+skip_word("ghehackt").  % en niet gehackt
+skip_word("Zoooo").
+skip_word("zoooo").
+skip_word("zooght").
+skip_word("gheschopt"). % only geschopt, not gesopt
+
+skip_word("quacken").   % geen idee of kwakken of kwaken of nog iets anders?
+skip_word("Quadraat").  % naam?
+skip_word("lights").    % probably mostly in English quotes
+
 skip_word("eenen").     % moet een of ene worden
+skip_word("eenigen").   % moet enige of enigen worden
 skip_word("vorsch").    % moet ook vers en kikvors worden
 skip_word("heeschen").  % want wordt ook hese
 skip_word("hoogen").    % want wordt ook hoge
@@ -69,10 +154,13 @@ apply_spelling_rules_(Cs0,Cs,His0,His) :-
     spelling_rule(Cs0,Cs1,His0,His1),
     apply_spelling_rules_(Cs1,Cs,His1,His).
 
-allowed_his(normal).
-allowed_his('part-V').
-allowed_his('V-d'(normal)).
-allowed_his('V-de'(normal)).
+allowed_his(normal,_).
+allowed_his('part-V',_).
+allowed_his('Adj-s',[]).
+allowed_his('V-d'(His),B) :-
+    allowed_his(His,B).
+allowed_his('V-de'(His),B) :-
+    allowed_his(His,B).
 
 %%% The first few rules are for "de-doubling" vowels.
 %%% In modern spelling, long vowels are written
@@ -215,21 +303,18 @@ spelling_rule(Chars,Chars1,His,[neder|His]):-
     append(Begin,[110,101,100,101,114|End],Chars),
     append(Begin,[110,101,101,114|End],Chars1).
 
-%%% lik -> lijk (aan het eind)
+%%% lik -> lijk (in sommige contexten)
 spelling_rule(Chars,Chars1,His,[lik|His]) :-
-    \+ member(Chars,["lik","Lik","blik","Blik","slik","Slik"]),
-    append(Begin,"lik",Chars),
-    append(Begin,"lijk",Chars1).
+    append([B1,B2|Begin],[108,105,107|Rest],Chars),
+    lik_rest(Rest),
+    append([B1,B2|Begin],[108,105,106,107|Rest],Chars1).
 
-%%% like$ -> lijke
-spelling_rule(Chars,Chars1,His,[like|His]) :-
-    append(Begin,"like",Chars),
-    append(Begin,"lijke",Chars1).
-
-%%% liks$ -> lijks
-spelling_rule(Chars,Chars1,His,[liks|His]) :-
-    append(Begin,"liks",Chars),
-    append(Begin,"lijks",Chars1).
+%%% elijk -> lijk (in sommige contexten)
+spelling_rule(Chars,Chars1,His,[moeielijk|His]) :-
+    \+ member(vorstlijk,His),
+    append([B1,B2|Begin],[101,108,105,106,107|Rest],Chars),
+    lik_rest(Rest),
+    append([B1,B2|Begin],[108,105,106,107|Rest],Chars1).
 
 %%% ieele -> iële
 spelling_rule(Chars,Chars1,His,[ieele|His]) :-
@@ -244,11 +329,13 @@ spelling_rule(Chars,Chars1,His,[gezamendlijk|His]) :-
 
 %%% ndlijk -> ndelijk
 spelling_rule(Chars,Chars1,His,[vriendlijk|His]) :-
+    \+ member(moeielijk,His),
     append(Begin,[101,110,100,108,105,106,107|End],Chars),
     append(Begin,[101,110,100,101,108,105,106,107|End],Chars1).
 
 %%% stlijk -> stelijk
 spelling_rule(Chars,Chars1,His,[vorstlijk|His]) :-
+    \+ member(moeielijk,His),
     append(Begin,[115,116,108,105,106,107|End],Chars),
     append(Begin,[115,116,101,108,105,106,107|End],Chars1).
 
@@ -362,3 +449,11 @@ ck_rule([V3|T],Begin,Result) :-
     cons(C),
     vow(V1),
     append(Begin,[107,107,V3|T],Result).
+
+lik_rest("").
+lik_rest("e").
+lik_rest("en").
+lik_rest("er").
+lik_rest("s").
+lik_rest("heid").
+lik_rest("heden").
