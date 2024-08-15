@@ -129,7 +129,10 @@ skip_word("zooght").
 skip_word("gheschopt"). % only geschopt, not gesopt
 
 skip_word("quacken").   % geen idee of kwakken of kwaken of nog iets anders?
+skip_word("quadraat").  % naam?
 skip_word("Quadraat").  % naam?
+skip_word("quadraet").  % naam?
+skip_word("Quadraet").  % naam?
 skip_word("lights").    % probably mostly in English quotes
 
 skip_word("scheyt").
@@ -317,9 +320,11 @@ spelling_rule(Chars,Chars1,His,[lik|His]) :-
     append([B1,B2|Begin],[108,105,106,107|Rest],Chars1).
 
 %%% elijk -> lijk (in sommige contexten)
+%%% 'lijk -> lijk
 spelling_rule(Chars,Chars1,His,[moeielijk|His]) :-
     \+ member(vorstlijk,His),
-    append([B1,B2|Begin],[101,108,105,106,107|Rest],Chars),
+    append([B1,B2|Begin],[QE,108,105,106,107|Rest],Chars),
+    lists:member(QE,[101,39]),
     lik_rest(Rest),
     append([B1,B2|Begin],[108,105,106,107|Rest],Chars1).
 
@@ -337,14 +342,15 @@ spelling_rule(Chars,Chars1,His,[gezamendlijk|His]) :-
 %%% ndlijk -> ndelijk
 spelling_rule(Chars,Chars1,His,[vriendlijk|His]) :-
     \+ member(moeielijk,His),
-    append(Begin,[101,110,100,108,105,106,107|End],Chars),
-    append(Begin,[101,110,100,101,108,105,106,107|End],Chars1).
+    append(Begin,[110,100,108,105,106,107|End],Chars),
+    append(Begin,[110,100,101,108,105,106,107|End],Chars1).
 
 %%% stlijk -> stelijk
 spelling_rule(Chars,Chars1,His,[vorstlijk|His]) :-
     \+ member(moeielijk,His),
-    append(Begin,[115,116,108,105,106,107|End],Chars),
-    append(Begin,[115,116,101,108,105,106,107|End],Chars1).
+    append(Begin,[S,T,108,105,106,107|End],Chars),
+    st_rk(S,T),
+    append(Begin,[S,T,101,108,105,106,107|End],Chars1).
 
 %%% [ns][dt][lr]en -> [ns][dt]e[lr]en
 spelling_rule(Chars,Chars1,His,[handlen|His]) :-
@@ -363,6 +369,9 @@ spelling_rule(Chars,Chars1,His,[saam|His]):-
 spelling_rule(Chars,Chars1,His,[zamen|His]):-
     append("zamen",End,Chars),
     append("samen",End,Chars1).
+
+st_rk(115,116).
+st_rk(114,107).
 
 dt(100).
 dt(116).
