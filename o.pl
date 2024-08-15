@@ -72,12 +72,21 @@ filter_list([ondraaglijk,ondragelijk],List) :-
 filter_list([ondraaglijke,ondragelijke],List) :-
     !,
     List = [ondraaglijke].
+filter_list([ondraaglijker,ondragelijker],List) :-
+    !,
+    List = [ondraaglijker].
 filter_list([onbeschrijfelijk,onbeschrijflijk],List) :-
     !,
     List = [onbeschrijfelijk].
 filter_list([onbeschrijfelijke,onbeschrijflijke],List) :-
     !,
     List = [onbeschrijfelijke].
+filter_list(['Onbeschrijfelijk','Onbeschrijflijk'],List) :-
+    !,
+    List = ['Onbeschrijfelijk'].
+filter_list(['Onbeschrijfelijke','Onbeschrijflijke'],List) :-
+    !,
+    List = ['Onbeschrijfelijke'].
 filter_list([zintuigelijk,zintuiglijk],List) :-
     !,
     List = [zintuigelijk].
@@ -86,8 +95,8 @@ filter_list([zintuigelijke,zintuiglijke],List) :-
     List = [zintuigelijke].
 filter_list(L,L).
 
-%report([],Chars) :-
-%    format(user_error,"no results: ~s~n",[Chars]).
+report([],Chars) :-
+    format(user_error,"no results: ~s~n",[Chars]).
 report([Word|Words],Chars):-
     report_alts(Words,Word,Chars).
 
@@ -474,3 +483,12 @@ lik_rest("er").
 lik_rest("s").
 lik_rest("heid").
 lik_rest("heden").
+lik_rest("t").
+lik_rest("te").
+lik_rest("ten").
+lik_rest("end").
+lik_rest("ing").
+lik_rest("ingen").
+lik_rest("st").
+lik_rest("ste").
+
