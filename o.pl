@@ -99,7 +99,7 @@ report_alts([Word2|Words],Word1,Chars) :-
 
 find_variant(Chars,Word1,Before) :-
     \+ skip_word(Chars),
-    % format(user_error,"trying ~s~n",[Chars]),  for debugging if a cycle is suspected
+%%%    format(user_error,"trying ~s~n",[Chars]),  % for debugging if a cycle is suspected
     apply_spelling_rules(Chars,Chars1,Before),
     atom_codes(Word1,Chars1),
     alpino_lex:lexicon(_,_,[Word1],[],His),
@@ -157,7 +157,13 @@ skip_word("geenen"). % both geen and genen
 
 apply_spelling_rules(Chars0,Chars,Before) :-
     spelling_rule(Chars0,Chars1,Before,His0),
-    apply_spelling_rules_(Chars1,Chars,His0,_His).   % output _His for debug purposes
+    apply_spelling_rules_(Chars1,Chars,His0,His), % output _His for debug purposes
+    length(His,Len),
+    (   Len > 10
+    ->  format(user_error,"cycle detected: ~s ~s ~w~n",[Chars0,Chars,His]),
+	halt
+    ;   true
+    ).
 
 apply_spelling_rules_(Cs,Cs,H,H).
 apply_spelling_rules_(Cs0,Cs,His0,His) :-
@@ -322,11 +328,19 @@ spelling_rule(Chars,Chars1,His,[lik|His]) :-
 %%% elijk -> lijk (in sommige contexten)
 %%% 'lijk -> lijk
 spelling_rule(Chars,Chars1,His,[moeielijk|His]) :-
-    \+ member(vorstlijk,His),
+    \+ member(vorstlijk,His), % no cycles
     append([B1,B2|Begin],[QE,108,105,106,107|Rest],Chars),
     lists:member(QE,[101,39]),
     lik_rest(Rest),
     append([B1,B2|Begin],[108,105,106,107|Rest],Chars1).
+
+%%% lijk -> elijk (in sommige contexten)
+spelling_rule(Chars,Chars1,His,[vorstlijk|His]) :-
+    \+ member(moeielijk,His),	% no cycles with the other
+    append([B1|Begin],[B2,108,105,106,107|Rest],Chars),
+    \+ vow(B2),                % not if there already is an e/a/
+    lik_rest(Rest),
+    append([B1|Begin],[B2,101,108,105,106,107|Rest],Chars1).
 
 %%% ieele -> iële
 spelling_rule(Chars,Chars1,His,[ieele|His]) :-
@@ -338,19 +352,6 @@ spelling_rule(Chars,Chars1,His,[gezamendlijk|His]) :-
     append(Begin,[101,110,DT,108,105,106,107|End],Chars),
     member(DT,[100,116]),
     append(Begin,[101,110,108,105,106,107|End],Chars1).
-
-%%% ndlijk -> ndelijk
-spelling_rule(Chars,Chars1,His,[vriendlijk|His]) :-
-    \+ member(moeielijk,His),
-    append(Begin,[110,100,108,105,106,107|End],Chars),
-    append(Begin,[110,100,101,108,105,106,107|End],Chars1).
-
-%%% stlijk -> stelijk
-spelling_rule(Chars,Chars1,His,[vorstlijk|His]) :-
-    \+ member(moeielijk,His),
-    append(Begin,[S,T,108,105,106,107|End],Chars),
-    st_rk(S,T),
-    append(Begin,[S,T,101,108,105,106,107|End],Chars1).
 
 %%% [ns][dt][lr]en -> [ns][dt]e[lr]en
 spelling_rule(Chars,Chars1,His,[handlen|His]) :-
