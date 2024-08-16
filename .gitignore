@@ -1,6 +1,7 @@
 *.tok
 *.tok.sents
 ElineVere
+elinevere*
 Random
 random-with.sents.gz
 random-without.sents.gz
@@ -8,7 +9,6 @@ words.freq
 words.unknowns
 auto
 handc
-autoc
 btest*
 ctest*
 all.alts
@@ -20,3 +20,4 @@ TestWith
 TestWithout
 *~
 *.bak
+auto.misses
