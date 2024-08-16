@@ -18,3 +18,5 @@ dbnl_with
 dbnl_without
 TestWith
 TestWithout
+*~
+*.bak
