@@ -12,159 +12,109 @@ go :-
     !.
 
 check_spelling(Chars) :-
-    findall(Word1,find_variant(Chars,Word1,[]),List0),
+    findall(Word1/His,find_variant(Chars,Word1,[],His),List0),
     sort(List0,List1),
     filter_list(List1,List2),
     report(List2,Chars).
 
-%% I need a better solution for such cases...
-%% remember these members are sorted
-filter_list([kwadraat,quadraat],List) :-
+%%% by default, only keep the candidate(s) with the fewest number of
+%%% rule applications. In case of an equal number, use ~ to specify multiple
+%%% alternatives
+filter_list([kwadraat/_,quadraat/_],List) :-
     !,
     List = [kwadraat].
-filter_list([liefelijk,lieflijk],List) :-
-    !,
-    List = [lieflijk].
-filter_list([liefelijke,lieflijke],List) :-
-    !,
-    List = [lieflijke].
-filter_list([liefelijks,lieflijks],List) :-
-    !,
-    List = [lieflijks].
-filter_list([liefelijker,lieflijker],List) :-
-    !,
-    List = [lieflijker].
-filter_list(['Liefelijk','Lieflijk'],List) :-
-    !,
-    List = ['Lieflijk'].
-filter_list(['Liefelijke','Lieflijke'],List) :-
-    !,
-    List = ['Lieflijke'].
-filter_list([verkieselijk,verkieslijk],List) :-
-    !,
-    List = [verkieslijk].
-filter_list([verkieselijke,verkieslijke],List) :-
-    !,
-    List = [verkieslijke].
-filter_list([verkieselijker,verkieslijker],List) :-
-    !,
-    List = [verkieslijker].
-filter_list([geriefelijk,gerieflijk],List) :-
-    !,
-    List = [gerieflijk].
-filter_list([geriefelijke,gerieflijke],List) :-
-    !,
-    List = [gerieflijke].
-filter_list([geriefelijker,gerieflijker],List) :-
-    !,
-    List = [gerieflijker].
-filter_list([dragelijk,draaglijk],List) :-
-    !,
-    List = [draaglijk].
-filter_list([dragelijke,draaglijke],List) :-
-    !,
-    List = [draaglijke].
-filter_list([dragelijker,draaglijker],List) :-
-    !,
-    List = [draaglijker].
-filter_list([ondraaglijk,ondragelijk],List) :-
-    !,
-    List = [ondraaglijk].
-filter_list([ondraaglijke,ondragelijke],List) :-
-    !,
-    List = [ondraaglijke].
-filter_list([ondraaglijker,ondragelijker],List) :-
-    !,
-    List = [ondraaglijker].
-filter_list([onbeschrijfelijk,onbeschrijflijk],List) :-
-    !,
-    List = [onbeschrijfelijk].
-filter_list([onbeschrijfelijke,onbeschrijflijke],List) :-
-    !,
-    List = [onbeschrijfelijke].
-filter_list(['Onbeschrijfelijk','Onbeschrijflijk'],List) :-
-    !,
-    List = ['Onbeschrijfelijk'].
-filter_list(['Onbeschrijfelijke','Onbeschrijflijke'],List) :-
-    !,
-    List = ['Onbeschrijfelijke'].
-filter_list([zintuigelijk,zintuiglijk],List) :-
-    !,
-    List = [zintuigelijk].
-filter_list([zintuigelijke,zintuiglijke],List) :-
-    !,
-    List = [zintuigelijke].
-filter_list(L,L).
+filter_list(Pairs0,List) :-
+    add_l(Pairs0,Pairs1),
+    sort(Pairs1,Pairs2),
+    filter_longer(Pairs2,List).
 
-report([],Chars) :-
-    format(user_error,"no results: ~s~n",[Chars]).
+add_l([],[]).
+add_l([H|T],[NH|NT]) :-
+    add_l1(H,NH),
+    add_l(T,NT).
+
+add_l1(Word/List0,Len-Word) :-
+    sort(List0,List),  % NB really should not remove doubles, but probably never happens in crucial cases?
+    length(List,Len).
+
+filter_longer([],[]).
+filter_longer([Len-W|T0],[W|T]) :-
+    filter_longer(T0,Len,T).
+
+filter_longer([],_,[]).
+filter_longer([Len2-_|_],Len,T):-
+    Len2 > Len,
+    !,
+    T = [].
+filter_longer([Len-W|T0],Len,[W|T]):-
+    filter_longer(T0,Len,T).
+
+
+%report([],Chars) :-
+%    format(user_error,"no results: ~s~n",[Chars]).
 report([Word|Words],Chars):-
     report_alts(Words,Word,Chars).
 
+%%% single result:
 report_alts([],Word,Chars) :-
     format("~s ~w~n",[Chars,Word]).
+%%% two results:  (so far, no cases of more than two have been observed)
 report_alts([Word2|Words],Word1,Chars) :-
     format(user_error,"multiple results: ~s --> ~w~n",[Chars,[Word1,Word2|Words]]),
     format("~s ~~~w~~~w~n",[Chars,Word1,Word2]).
 
-find_variant(Chars,Word1,Before) :-
-    \+ skip_word(Chars),
-    apply_spelling_rules(Chars,Chars1,Before),
+find_variant(Chars,Word1,Before,After) :-
+    atom_codes(Word,Chars),
+    \+ skip_word(Word),
+    apply_spelling_rules(Chars,Chars1,Before,After),
     atom_codes(Word1,Chars1),
     alpino_lex:lexicon(_,_,[Word1],[],His),
     allowed_his(His,Before).
 
-find_variant([Upper|Codes],Word1,Before) :-
+find_variant([Upper|Codes],Word1,Before,After) :-
     alpino_latin1:isupper(Upper),
     alpino_latin1:tolower(Upper,Lower), Upper \= Lower, % prevent loop for Čelinek
-    find_variant([Lower|Codes],Word0,[cap|Before]),
+    find_variant([Lower|Codes],Word0,[cap|Before],After),
     atom_codes(Word0,[L|Codes0]),
     alpino_latin1:islower(L),
     alpino_latin1:toupper(L,U),
     atom_codes(Word1,[U|Codes0]).
 
-skip_word("overheyt").
-skip_word("Overheyt").
-skip_word("ooverheit").
-skip_word("Ooverheit").
-skip_word("weeder").
-skip_word("Weeder").
-skip_word("weederom").
-skip_word("Weederom").
-skip_word("ghehackt").  % en niet gehackt
-skip_word("Zoooo").
-skip_word("zoooo").
-skip_word("zooght").
-skip_word("gheschopt"). % only geschopt, not gesopt
+skip_word(overheyt).
+skip_word(ooverheit).
+skip_word(weeder).
+skip_word(weederom).
+skip_word(ghehackt).  % en niet gehackt
+skip_word(zoooo).
+skip_word(zooght).
+skip_word(gheschopt). % only geschopt, not gesopt
 
-skip_word("quacken").   % geen idee of kwakken of kwaken of nog iets anders?
-skip_word("quadraat").  % naam?
-skip_word("Quadraat").  % naam?
-skip_word("quadraet").  % naam?
-skip_word("Quadraet").  % naam?
-skip_word("lights").    % probably mostly in English quotes
+skip_word(quacken).   % geen idee of kwakken of kwaken of nog iets anders?
+skip_word(quadraat).  % naam?
+skip_word(quadraet).  % naam?
+skip_word(lights).    % probably mostly in English quotes
 
-skip_word("scheyt").
-skip_word("eenen").     % moet een of ene worden
-skip_word("eenigen").   % moet enige of enigen worden
-skip_word("vorsch").    % moet ook vers en kikvors worden
-skip_word("heeschen").  % want wordt ook hese
-skip_word("hoogen").    % want wordt ook hoge
-skip_word("grooten").   % want wordt ook grote
-skip_word("asch").      % want als we er "as" van maken wordt dat vervolgens "als"
-skip_word("zooeven").   % moet zoëven worden, niet zoeven
+skip_word(scheyt).
+skip_word(eenen).     % moet een of ene worden
+skip_word(eenigen).   % moet enige of enigen worden
+skip_word(vorsch).    % moet ook vers en kikvors worden
+skip_word(heeschen).  % want wordt ook hese
+skip_word(hoogen).    % want wordt ook hoge
+skip_word(grooten).   % want wordt ook grote
+skip_word(asch).      % want als we er "as" van maken wordt dat vervolgens "als"
+skip_word(zooeven).   % moet zoëven worden, niet zoeven
 
 %% thanks Gerlof
-% skip_word("schoepen").  is now captured elsewhere
-% skip_word("schoort").   is now captured elsewhere
-skip_word("onderschoort").
-skip_word("geschel").
-skip_word("geschelde").
-skip_word("geschelt").
-skip_word("geene").  % both geen and gene
-skip_word("geenen"). % both geen and genen
+% skip_word(schoepen).  is now captured elsewhere
+% skip_word(schoort).   is now captured elsewhere
+skip_word(onderschoort).
+skip_word(geschel).
+skip_word(geschelde).
+skip_word(geschelt).
+skip_word(geene).  % both geen and gene
+skip_word(geenen). % both geen and genen
 
-apply_spelling_rules(Chars0,Chars,Before) :-
+apply_spelling_rules(Chars0,Chars,Before,His) :-
     spelling_rule(Chars0,Chars1,Before,His0),
     apply_spelling_rules_(Chars1,Chars,His0,His), % output _His for debug purposes
     length(His,Len),
@@ -385,6 +335,21 @@ spelling_rule(Chars,Chars1,His,[saam|His]):-
 spelling_rule(Chars,Chars1,His,[zamen|His]):-
     append("zamen",End,Chars),
     append("samen",End,Chars1).
+
+%%% ^sw -> zw
+spelling_rule(Chars,Chars1,His,[sw|His]):-
+    append("sw",End,Chars),
+    append("zw",End,Chars1).
+
+%%% dt$ -> d
+%%% generates (too?) many ambiguous results in case of verbs
+%%% rydt -> rijd rijdt
+%%%spelling_rule(Chars,Chars1,His,[dt|His]):-
+%%%    append(Begin,"dt",Chars),
+%%%    append(Begin,"d",Chars1).
+
+%%% things to try
+%%% nt$ -> nd
 
 dt(100).
 dt(116).

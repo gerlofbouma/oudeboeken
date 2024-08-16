@@ -1,6 +1,6 @@
-:- use_module(o).
+:- use_module(generate_alt_spelling).
 
-go :-
+go_adjs :-
     repeat,
     read_line(Chars),
     (   Chars == end_of_file

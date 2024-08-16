@@ -17,6 +17,8 @@ novelsdir = /mnt/local/tmp/andreas/DBNL-20230214/output/tokenized
 tests = $(wildcard TestWithout/*.tok)
 threshold = 5
 
+build: nouns adj_pair spelling 
+
 all: btest.sents all.alts apply-all 
 
 # for now, words including |,[,] are removed because Alpino -lex_all will do funny things
@@ -24,13 +26,6 @@ words.freq: $(novels)
 	find $(novelsdir) -name '*.tok.gz' | xargs zcat | sed -e 's/^[^|]*[|]//' | tr ' ' '\n' |\
         sort | uniq -c | sort -nr | awk '{ if ($$1 > $(threshold)) print $$0 }'|\
         grep -v '[|]' > words.freq
-
-### TODO: lex_all is overkill, use mlex from pretty.pl instead?
-# check unknown words, but (possibly) ignore words starting with capital/consisting of digits
-#ignore = grep -v -e '^[A-Z]' -e '^[0-9][0-9]*$$'
-ignore = cat
-# words.unknowns: words.freq
-# 	awk '{ print $$2 }' words.freq | $(ignore)| Alpino -notk pos_tagger=off filter_lexical_analysis=off display_lexical_analysis=unknowns unknowns=off batch_command=lex_all >/dev/null 2> words.unknowns
 
 words.unknowns: words.freq report_missing_lex.pl
 	awk '{ print $$2 }' words.freq | $(ignore)|\
@@ -64,16 +59,16 @@ adjn:
          awk '{print $$2 }' | sort | uniq -c |sort -nr |\
          awk '{ if ($$1>10) print $$2}' > adjn
 
-adj_pair: adjn generate_adj_pair.pl
-	sort adjn | Alpino -notk -l generate_adj_pair batch_command=go |uniq > adj_pair
+adj_pair: adjn generate_adj_pair.pl generate_alt_spelling.pl
+	sort adjn | Alpino -notk -l generate_adj_pair batch_command=go_adjs |uniq > adj_pair
 
 qnouns:
 	find $(novelsdir) -name '*.tok.gz' | xargs zcat |\
 	egrep -o '[ |](mijnen|dezen|den|zulken|een|eenen|hunnen|menigen|haren|zijnen|mijnen) [^ ][^ ]*en [^ ][^ ][^ ]* ' | awk '{ print $$3 }' | sort -u > qnouns
 
-nouns: qnouns q.pl
+nouns: qnouns generate_nouns.pl generate_alt_spelling.pl
 	cat qnouns |\
-         Alpino -notk unknowns=off -l q batch_command=noun |\
+         Alpino -notk unknowns=off -l generate_nouns batch_command=go_nouns |\
          uniq > nouns
 
 dbnl_with/%.sents.gz: dbnl_without/%.sents.gz triples.py spelling map.sed hand2 nouns adj_pair det_pair 
