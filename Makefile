@@ -27,8 +27,12 @@ words.freq: $(novels)
         sort | uniq -c | sort -nr | awk '{ if ($$1 > $(threshold)) print $$0 }'|\
         grep -v '[|]' > words.freq
 
+filter=cat
+## not much worth the trouble
+## filter=grep -v -e '^[0-9_,+./!?;:(){}\\]' -e '^[†$$=±§€£-][0-9_,+./!?;:(){}\\]' -e '[.]$$'
+
 words.unknowns: words.freq report_missing_lex.pl
-	awk '{ print $$2 }' words.freq | $(ignore)|\
+	awk '{ print $$2 }' words.freq | $(filter) |\
         Alpino -notk -l report_missing_lex batch_command=go >words.unknowns
 
 auto: words.unknowns generate_alt_spelling.pl
