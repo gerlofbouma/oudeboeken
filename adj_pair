@@ -187,6 +187,7 @@ bedienden bediende
 bedoelden bedoelde
 bedreigden bedreigde
 bedremmelden bedremmelde
+bedriegelijken bedrieglijke
 bedrieglijken bedrieglijke
 bedrijvenden bedrijvende
 bedrijvigen bedrijvige
@@ -398,6 +399,7 @@ bijgaanden bijgaande
 bijgeloovigen bijgelovige
 bijgevoegden bijgevoegde
 bijtenden bijtende
+bijvoegelijken bijvoeglijke
 bijvoeglijken bijvoeglijke
 bijzonderen bijzondere
 bijzondersten bijzonderste
@@ -494,6 +496,7 @@ breeden brede
 breederen bredere
 breedgeschouderden breedgeschouderde
 breedsten breedste
+breedvoerigen breedvoerige
 brekenden brekende
 brieschenden briesende
 broedenden broedende
@@ -681,6 +684,7 @@ doodelyken dodelijke
 dooden dode
 doodenden dodende
 doodgewonen doodgewone
+doodlyken dodelijke
 doodsbleeken doodsbleke
 doodschen doodse
 doodstillen doodstille
@@ -1122,6 +1126,7 @@ generalen generale
 geniaalsten geniaalste
 genialen geniale
 geniepigen geniepige
+genoegelijken genoeglijke
 genoeglijken genoeglijke
 genoegzamen genoegzame
 genoemden genoemde
@@ -1263,6 +1268,7 @@ gewissen gewisse
 gewitten gewitte
 gewonden gewonde
 gewonen gewone
+gewoonelijken gewoonlijke
 gewoonen gewone
 gewoonlijcken gewoonlijke
 gewoonlijken gewoonlijke
@@ -1404,6 +1410,7 @@ gunstigsten gunstigste
 guren gure
 guursten guurste
 haastigen haastige
+haatlyken hatelijke
 hachelijken hachelijke
 hachelijksten hachelijkste
 haestigen haastige
@@ -1427,6 +1434,7 @@ hartelijksten hartelijkste
 harteloozen harteloze
 hartelyken hartelijke
 hartgrondigen hartgrondige
+hartlijken hartelijke
 hartstochtelijken hartstochtelijke
 hartstochtelijksten hartstochtelijkste
 hartstogtelijken hartstochtelijke
@@ -1521,6 +1529,7 @@ hongerighen hongerige
 hongherigen hongerige
 hongherighen hongerige
 hoofdelijken hoofdelijke
+hoofdzaaklyken hoofdzakelijke
 hoofdzakelijken hoofdzakelijke
 hoofschen hoofse
 hoogbegaafden hoogbegaafde
@@ -1552,6 +1561,8 @@ huilenden huilende
 huiselijken huiselijke
 huiselyken huiselijke
 huishoudelijken huishoudelijke
+huislijken huiselijke
+huislyken huiselijke
 huiverenden huiverende
 huiveringwekkenden huiveringwekkende
 hulpbehoevenden hulpbehoevende
@@ -1886,11 +1897,16 @@ liefderijken liefderijke
 liefderijksten liefderijkste
 liefdevollen liefdevolle
 liefelijken liefelijke
+liefelijken lieflijke
 liefelijksten liefelijkste
+liefelijksten lieflijkste
 liefelyken liefelijke
+liefelyken lieflijke
 liefhebbenden liefhebbende
 lieflijcken lieflijke
+lieflijcken liefelijke
 lieflijken lieflijke
+lieflijken liefelijke
 liefsten liefste
 lieven lieve
 ligchamelijken lichamelijke
@@ -2003,6 +2019,8 @@ menschelijken menselijke
 menscheliken menselijke
 menschelyken menselijke
 menschlievenden menslievende
+menschlijken menselijke
+menschlyken menselijke
 menselijken menselijke
 merkwaardigen merkwaardige
 merkwaardigsten merkwaardigste
@@ -2053,6 +2071,10 @@ moederlyken moederlijke
 moedigen moedige
 moedigsten moedigste
 moedwilligen moedwillige
+moeielijken moeilijke
+moeielijksten moeilijkste
+moeijelijken moeilijke
+moeijelijksten moeilijkste
 moeilijken moeilijke
 moeilijksten moeilijkste
 moeilyken moeilijke
@@ -2224,6 +2246,7 @@ onbeschaamden onbeschaamde
 onbeschaemden onbeschaamde
 onbeschoften onbeschofte
 onbeschrijfelijken onbeschrijfelijke
+onbeschrijfelijken onbeschrijflijke
 onbestemden onbestemde
 onbesuisden onbesuisde
 onbetrouwbaren onbetrouwbare
@@ -2265,6 +2288,7 @@ ondiepen ondiepe
 ondoordringbaren ondoordringbare
 ondoorgrondelijken ondoorgrondelijke
 ondraaglijken ondraaglijke
+ondraaglijken ondragelijke
 ondragelijken ondragelijke
 ondubbelzinnigen ondubbelzinnige
 onduidelijken onduidelijke
@@ -2282,6 +2306,7 @@ ongehuwden ongehuwde
 ongekenden ongekende
 ongeletterden ongeletterde
 ongelijken ongelijke
+ongeloofelijken ongelooflijke
 ongelooflijken ongelooflijke
 ongeloovigen ongelovige
 ongelovigen ongelovige
@@ -2322,6 +2347,7 @@ onjuisten onjuiste
 onkundigen onkundige
 onkundigsten onkundigste
 onmachtigen onmachtige
+onmeetlijken onmetelijke
 onmenschelijken onmenselijke
 onmetelijken onmetelijke
 onmiddellijken onmiddellijke
@@ -2335,6 +2361,7 @@ onnoodigen onnodige
 onnozelen onnozele
 onontbeerlijken onontbeerlijke
 onontkoombaren onontkoombare
+onoogelijken onooglijke
 onophoudelijken onophoudelijke
 onoverkomelijken onoverkomelijke
 onoverwinnelijken onoverwinnelijke
@@ -2358,6 +2385,8 @@ onschuldighen onschuldige
 onschuldigsten onschuldigste
 onsterfelijken onsterfelijke
 onsterfelyken onsterfelijke
+onsterflijken onsterfelijke
+onsterflyken onsterfelijke
 onstuimigen onstuimige
 ontaarden ontaarde
 ontblooten ontblote
@@ -2419,6 +2448,7 @@ onverhoedschen onverhoedse
 onverklaarbaren onverklaarbare
 onvermijdelijken onvermijdelijke
 onvermoeibaren onvermoeibare
+onvermoeiden onvermoeide
 onvermydelyken onvermijdelijke
 onversaagden onversaagde
 onverschilligen onverschillige
@@ -2471,6 +2501,7 @@ oorlogzuchtigen oorlogzuchtige
 oorspronkelijken oorspronkelijke
 oorspronkelijksten oorspronkelijkste
 oorspronkelyken oorspronkelijke
+oorspronklijken oorspronkelijke
 oorzakelijken oorzakelijke
 oostelijken oostelijke
 oosterschen oosterse
@@ -3023,6 +3054,7 @@ stercken sterke
 stercksten sterkste
 stereotypen stereotype
 sterfelijken sterfelijke
+sterflijcken sterfelijke
 sterken sterke
 sterkenden sterkende
 sterkeren sterkere
@@ -3345,6 +3377,7 @@ verderen verdere
 verderfelijken verderfelijke
 verderfelijksten verderfelijkste
 verderfelyken verderfelijke
+verderflijken verderfelijke
 verdervenden verdervende
 verdichten verdichte
 verdienden verdiende
@@ -3537,6 +3570,7 @@ vertrekkenden vertrekkende
 vertrouwden vertrouwde
 vertrouwelijken vertrouwelijke
 vertrouwelijksten vertrouwelijkste
+vertrouwlijken vertrouwelijke
 vertwijfelden vertwijfelde
 vertwijfelenden vertwijfelende
 vervaarlijken vervaarlijke
@@ -3719,6 +3753,7 @@ vreemdsoortigen vreemdsoortige
 vreemdsten vreemdste
 vreeselijken vreselijke
 vreeselijksten vreselijkste
+vreeslijken vreselijke
 vreugdevollen vreugdevolle
 vriendelijken vriendelijke
 vriendelijksten vriendelijkste
@@ -3856,6 +3891,7 @@ werkelijken werkelijke
 werkeloozen werkeloze
 werkenden werkende
 werkloozen werkloze
+werktuigelijken werktuiglijke
 werktuiglijken werktuiglijke
 werkzaamen werkzame
 werkzaamsten werkzaamste
@@ -3937,6 +3973,7 @@ wysten wijste
 wyzen wijze
 ydelen ijdele
 yverigen ijverige
+zaaklyken zakelijke
 zachtaardigen zachtaardige
 zachten zachte
 zachteren zachtere
@@ -4001,6 +4038,7 @@ zingenden zingende
 zinkenden zinkende
 zinnelijken zinnelijke
 zintuigelijken zintuigelijke
+zintuigelijken zintuiglijke
 zittenden zittende
 zodanigen zodanige
 zoekenden zoekende

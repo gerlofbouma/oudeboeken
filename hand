@@ -46,6 +46,7 @@ bizonderheid bijzonderheid
 bizonders bijzonders
 blasen blazen
 bleeft bleef
+bliven blijven
 boomen bomen
 breeden brede
 breedt breed
@@ -106,6 +107,7 @@ drij drie
 drijmaal driemaal
 droppel druppel
 droppels druppels
+duysent duizend
 duitsche Duitse
 duitse Duitse
 Duitschland Duitsland
@@ -184,7 +186,7 @@ grenzenlooze grenzeloze
 grieksche Griekse
 grooten ~groten~grote
 grooteren ~groteren~grotere
-hadde had
+hadde ~had~hadden
 haddet had
 handt hand
 hare ~haar~hare
@@ -277,6 +279,7 @@ litteratuur literatuur
 luiden ~luiden~lieden~luide
 mach mag
 maor maar
+mar maar
 medegebracht meegebracht
 medegenomen meegenomen
 medewerken meewerken
@@ -338,6 +341,7 @@ onnoozel onnozel
 onsen ~ons~onze~onzen
 onse onze
 ontfangen ontvangen
+ontrent omtrent
 onverdragelijk onverdraaglijk
 onverdragelijke onverdraaglijke
 oogslag oogopslag
@@ -345,6 +349,7 @@ oore ore
 ooverheit overheid
 opene open
 oppersten opperste
+opzigte opzichte
 oudt out
 oue oude
 ouë oude
@@ -392,7 +397,10 @@ segt zegt
 seide zei
 sei zei
 selve zelf
+senden zenden
+sendt zendt
 seyde zei
+seyden zeiden
 sheik sjeik
 sich zich
 sien zien
@@ -438,6 +446,7 @@ sullen zullen
 sult zult
 swaer zwaar
 swart zwart
+syn zijn
 syntaktisch syntactisch
 syntaktische syntactische
 syntaktiese syntactische
@@ -531,6 +540,7 @@ woar waar
 woordt woord
 woudt wilde
 yemandt iemand
+yn in
 zachtkens zachtjes
 zangvereeniging zangvereniging
 Zeelandt Zeeland
