@@ -25,14 +25,21 @@ words.freq: $(novels)
         sort | uniq -c | sort -nr | awk '{ if ($$1 > $(threshold)) print $$0 }'|\
         grep -v '[|]' > words.freq
 
+### TODO: lex_all is overkill, use mlex from pretty.pl instead?
 # check unknown words, but (possibly) ignore words starting with capital/consisting of digits
 #ignore = grep -v -e '^[A-Z]' -e '^[0-9][0-9]*$$'
 ignore = cat
-words.unknowns: words.freq
-	awk '{ print $$2 }' words.freq | $(ignore)| Alpino -notk pos_tagger=off display_lexical_analysis=unknowns unknowns=off batch_command=lex_all >/dev/null 2> words.unknowns
+# words.unknowns: words.freq
+# 	awk '{ print $$2 }' words.freq | $(ignore)| Alpino -notk pos_tagger=off filter_lexical_analysis=off display_lexical_analysis=unknowns unknowns=off batch_command=lex_all >/dev/null 2> words.unknowns
 
-auto: words.unknowns o.pl
-	grep unknown: words.unknowns | awk '{print $$2 }'| Alpino -notk -l o batch_command=go  > auto
+words.unknowns: words.freq report_missing_lex.pl
+	awk '{ print $$2 }' words.freq | $(ignore)|\
+        Alpino -notk -l report_missing_lex batch_command=go >words.unknowns
+
+auto: words.unknowns generate_alt_spelling.pl
+	grep unknown: words.unknowns |\
+        awk '{print $$2 }'|\
+        Alpino -notk -l generate_alt_spelling batch_command=go  > auto
 
 spelling: auto hand
 	python3 add_cap.py < hand > handc
@@ -57,8 +64,8 @@ adjn:
          awk '{print $$2 }' | sort | uniq -c |sort -nr |\
          awk '{ if ($$1>10) print $$2}' > adjn
 
-adj_pair: adjn
-	sort adjn | Alpino -notk -l p batch_command=adj |uniq > adj_pair
+adj_pair: adjn generate_adj_pair.pl
+	sort adjn | Alpino -notk -l generate_adj_pair batch_command=go |uniq > adj_pair
 
 qnouns:
 	find $(novelsdir) -name '*.tok.gz' | xargs zcat |\
