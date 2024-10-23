@@ -548,7 +548,7 @@ def seq_Dposgfdfgpl(ws, i):
               ):
             return [('','['),
                     (ws[i],   detposgfdfgpl_pers[ws[i]]),
-                    (ws[i+1], ws[i+1]),
+                    (ws[i+1], ws[i+1][:-1] if ws[i+1][-1].lower()=='n' else ws[i+1]),
                     ('',']')]        
         elif ( len(ws) >= i+3
                and ws[i+1] in adv
@@ -558,7 +558,7 @@ def seq_Dposgfdfgpl(ws, i):
             return [('','['),
                     (ws[i],   detposgfdfgpl_pers[ws[i]]),
                     (ws[i+1], ws[i+1]),
-                    (ws[i+2], ws[i+2]),
+                    (ws[i+2], ws[i+2][:-1] if ws[i+2][-1].lower()=='n' else ws[i+2]),
                     ('',']')]        
         elif ( i > 0
                and ( ws[i-1] in prep or ws[i-1] == 'als' )
