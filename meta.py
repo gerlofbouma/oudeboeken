@@ -23,7 +23,7 @@ def main():
             words = line.split()
         nwords = []
         for word in words:
-            if word == '[':
+            if word.startswith('@') and nwords[-1] == '[':
                 in_brackets = True
             elif word == ']':
                 in_brackets = False
