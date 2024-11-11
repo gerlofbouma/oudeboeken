@@ -576,8 +576,15 @@ def seq_Dposgfdfgpl(ws, i):
                 return [('', 'van'),
                         (ws[i], detposgfdfgpl[ws[i]])]
     
+        
+def seq_DN(ws, i):
+    # Det+n Nmasc / Nplur
+    if ( len(ws) > i+1
+         and ws[i] in detn
+         and ( ws[i+1] in noun or ws[i+1] in nounplur ) # alleen als 'lookahead'
+        ):           
+        return [(ws[i], detn[ws[i]])]
 
-            
 ##
 ## Main
 ##
@@ -600,10 +607,11 @@ def main():
 
     global detgenneut, detgenmasc, detdatplur, detposgfdfgpl, detposgfdfgpl_pers, te_det
     detgenneut = {'des': 'het',     'dezes': 'dit',   'diens': '~dat~diens',
-                  'haars': 'haar',  'heurs': 'haar',  'hunnes': 'hun',
-                  'huns': 'hun',    'mijns': 'mijn',  'myns': 'mijn',
-                  'onses': 'ons',   'onzes': 'ons',   'uwes': 'uw',
-                  'uws': 'uw',      'zijns': 'zijn',  'zyns': 'zijn',
+                  'haars': 'haar',  'hares': 'haar',  'heurs': 'haar',
+                  'hunnes': 'hun',  'huns': 'hun',    'mijns': 'mijn',
+                  'myns': 'mijn',   'onses': 'ons',   'onzes': 'ons',
+                  'uwes': 'uw',     'uws': 'uw',      'zijns': 'zijn',
+                  'zyns': 'zijn',
                   }
 
     detgenmasc = detgenneut | {'des': 'de',      'dezes': 'deze',  'diens': '~die~diens',
@@ -661,6 +669,46 @@ def main():
                               }
     te_det.update({copycase('Aaa',k): copycase('Aaa',v)
                    for k, v in te_det.items()})
+
+    global detn
+    detn = {'allen': '~alle~allen',
+            "d'n": 'de',
+            'den': '~de~den',
+            'denzelfden': 'dezelfde',
+            'dezen': 'deze',
+            'dien': '~die~dien',
+            'eenen': '~een~ene~enen',
+            'eenigen': '~enige~enigen',
+            'eenighen': '~enige~enigen',
+            'elken': 'elke',
+            'enen': '~een~enen',
+            'enigen': '~enige~enigen',
+            'enighen': '~enige~enigen',
+            'enkelen': '~enkele~enkelen',
+            'geenen': '~geen~genen',
+            'haaren': '~haar~hare~haren',
+            'haren': '~haar~hare~haren',
+            'heuren': '~haar~hare',
+            'hunnen': '~hun~hunne~hunnen',
+            'iederen': 'iedere',
+            'meenigen': '~menig~menige',
+            'meenighen': '~menig~menige',
+            'menigen': '~menig~menige',
+            'menighen': '~menig~menige',
+            'mijnen': '~mijn~mijne~mijnen',
+            'mynen': '~mijn~mijne~mijnen',
+            'nen': 'een',
+            'onsen': '~onze~onzen',
+            'onzen': '~onze~onzen',
+            'uwen': '~uw~uwen',
+            'welken': 'welke',
+            'zijnen': '~zijn~zijne~zijnen',
+            'zulken': 'zulke',
+            'zynen': '~zijn~zijne~zijnen',
+            'énen': '~één~éne~énen',
+            'éénen': '~één~éne~énen',}
+    detn.update({copycase('Aaa',k): copycase('Aaa',v)
+                 for k, v in detn.items()})
     
     
     # process loop
@@ -688,6 +736,7 @@ def main():
                 or seq_PAN(words_in, i)
                 or seq_te_DN(words_in, i)
                 or seq_Dposgfdfgpl(words_in, i)
+                or seq_DN(words_in, i)
             )
             
             if mapping:
