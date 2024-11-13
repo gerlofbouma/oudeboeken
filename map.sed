@@ -36,6 +36,7 @@ s/\([| ]\)Het geen /\1[ @mwu Het geen ] /g
 s/ het geen ik / [ @mwu het geen ] ik /g
 s/ van daag / [ @mwu van daag ] /g
 s/ hair / [ @postag noun(het,mass,sg) hair ] /g
+s/ hairen / [ @postag noun(het,both,pl) hairen ] /g
 s/ zonderdat / [ @postag complementizer zonderdat ] /g
 s/ zou-die / [ @alt zou zou-die ] [ @phantom hij ] /g
 s/ zei-die / [ @alt zei zou-die ] [ @phantom hij ] /g
@@ -63,7 +64,8 @@ s/ den zijnen / [ @alt de den ] [ @alt zijne zijnen ] /g
 s/ geen enkelen / geen [ @alt enkele enkelen ] /g
 s/ als je blieft / [ @mwu als je blieft ] /g
 s/\([| ]\)Als je blieft /\1[ @mwu Als je blieft ] /g
-s/\([| ]\)Als of /\1[ @mwu Alsof ] /g
+s/\([| ]\)Als of /\1[ @mwu Als of ] /g
+s/\([| ]\)als of /\1[ @mwu als of ] /g
 s/\([| ]\)'s Anderen daags /\1[ @mwu 's Anderen daags ] /g
 s/ allen gevalle / [ @alt alle allen ] [ @alt gevallen gevalle ] /g
 s/ doen ik / [ @alt doe doen ] ik /g
@@ -87,7 +89,7 @@ s/\([| ]\)Van zelf /\1 [ @mwu_alt vanzelf Van zelf ] /g
 s/\([| ]\)des ondanks /\1 [ @mwu_alt desondanks des ondanks ] /g
 s/\([| ]\)Des ondanks /\1 [ @mwu_alt desondanks Des ondanks ] /g
 s/\([| ]\)elke der /\1[ @alt elk elke ] der /g
-s/\([| ]\)Elke der /\1[ @alt Elk elke ] der /g
+s/\([| ]\)Elke der /\1[ @alt Elk Elke ] der /g
 s/ als$/ als [ @phantom : ]/
 s/ zoals$/ zoals [ @phantom : ]/
 s/ met$/ met [ @phantom : ]/
