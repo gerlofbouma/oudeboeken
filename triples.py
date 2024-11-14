@@ -206,7 +206,7 @@ def seq_DgenmascN(ws, i):
          and ws[i] in detgenmasc and ws[i+1] in noungenmasc
          # uitgezonderd
          and not ws[i+1].lower() == 'huizes'             # liever bij genneut
-         and not ( ws[i].lower() in ['haars', 'huns', 'mijns', 'onzes', 'uws', 'zijns',]
+         and not ( ws[i].lower() in ['haars', 'huns', 'mijns', 'onzes', 'uws', 'zijns', 'des']
                    and ws[i+1].lower() in ['ondanks'] )
          and not ( ws[i].lower() == 'des'
                    and ws[i+1].lower() in ['noods'] )
